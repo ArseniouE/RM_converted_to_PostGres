@@ -1,0 +1,43 @@
+CREATE TABLE olapts.rm_test (id_ int, ref_date date);
+
+
+-----------------------------------------------
+
+CREATE OR REPLACE FUNCTION olapts.rm_test(IN ref_date date)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    VOLATILE
+    PARALLEL UNSAFE
+    COST 100
+AS $BODY$
+declare
+ pl_status boolean:=FALSE;
+begin
+	
+	TRUNCATE TABLE olapts.rm_test; 
+	insert into olapts.rm_test (
+		select  1,ref_date);
+
+pl_status:=TRUE;
+RETURN pl_status;
+EXCEPTION 
+	WHEN OTHERS THEN	
+		Return pl_status;		
+end;
+$BODY$;
+
+-----------------------------------------------
+
+-- View: olapts.rm_test_view
+
+-- DROP VIEW olapts.rm_test_view;
+
+CREATE OR REPLACE VIEW olapts.rm_test_view
+ AS
+ SELECT rm_test.id_,
+    rm_test.ref_date
+   FROM olapts.rm_test;
+
+ALTER TABLE olapts.rm_test_view
+    OWNER TO olap;
+
